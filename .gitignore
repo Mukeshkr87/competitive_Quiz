@@ -1,0 +1,40 @@
+# Node dependencies
+**/node_modules
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.log
+
+# Build output
+**/dist
+**/build
+**/out
+**/.vite
+
+# Environment files and secrets
+.env
+.env.*
+frontend/.env.local
+server/.env
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.bak
+*.swo
+
+# Temporary files and caches
+/tmp
+*.tmp
+*.temp
+
+# Test output
+coverage/
+
+# Uploaded files
+/uploads
