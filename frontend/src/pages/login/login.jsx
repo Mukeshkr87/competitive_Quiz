@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
+import { apiUrl } from "@/lib/api";
 
 export default function Login() {
   const {
@@ -16,7 +17,6 @@ export default function Login() {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const apiUrl = import.meta.env.VITE_BACKEND_URL;
     try {
       const response = await axios.post(`${apiUrl}/api/user/login`, data);
       Cookies.set("token", response.data.token, { expires: 1 });

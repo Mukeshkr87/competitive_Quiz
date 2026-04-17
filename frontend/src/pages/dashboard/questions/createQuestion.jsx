@@ -17,6 +17,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 import { useState } from "react";
+import { apiUrl } from "@/lib/api";
 
 export default function CreateQuestion() {
   const { register, handleSubmit, control, reset } = useForm();
@@ -33,7 +34,6 @@ export default function CreateQuestion() {
 
   const onSubmit = async (data) => {
     const token = Cookies.get("token");
-    const apiUrl = import.meta.env.VITE_BACKEND_URL;
     try {
       let options = [data.option1, data.option2, data.option3];
       const payload = {
@@ -64,7 +64,6 @@ export default function CreateQuestion() {
     }
 
     const token = Cookies.get("token");
-    const apiUrl = import.meta.env.VITE_BACKEND_URL;
     
     setGenerating(true);
     try {
@@ -99,7 +98,6 @@ export default function CreateQuestion() {
     }
 
     const token = Cookies.get("token");
-    const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
     setUploading(true);
     setGenerating(true);
@@ -149,7 +147,6 @@ export default function CreateQuestion() {
 
   const saveGeneratedQuestion = async (question) => {
     const token = Cookies.get("token");
-    const apiUrl = import.meta.env.VITE_BACKEND_URL;
     try {
       const payload = {
         title: question.title,
@@ -176,7 +173,6 @@ export default function CreateQuestion() {
 
   const saveAllGeneratedQuestions = async () => {
     const token = Cookies.get("token");
-    const apiUrl = import.meta.env.VITE_BACKEND_URL;
     
     try {
       let savedCount = 0;

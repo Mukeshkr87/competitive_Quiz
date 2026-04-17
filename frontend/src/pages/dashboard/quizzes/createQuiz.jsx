@@ -6,9 +6,10 @@ import QuestionAddComponent from "./questionAddComponent";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
+import { apiUrl } from "@/lib/api";
 
 export default function CreateQuiz() {
-  const { questions, setActiveTab , setQuizzes } = useDashboard();
+  const { questions, setActiveTab, setQuizzes } = useDashboard();
   const [title, setTitle] = useState("");
 
   const [questionList, setQuestionList] = useState([]);
@@ -18,13 +19,19 @@ export default function CreateQuiz() {
   };
 
   const addQuestion = (q) => {
-    setQuestionList((prev) => [
-      ...prev,
-      {
-        title: q.title,
-        id: q._id,
-      },
-    ]);
+    setQuestionList((prev) => {
+      if (prev.some((question) => question.id === q._id)) {
+        return prev;
+      }
+
+      return [
+        ...prev,
+        {
+          title: q.title,
+          id: q._id,
+        },
+      ];
+    });
   };
 
   const removeQuestion = (q) => {
@@ -34,7 +41,6 @@ export default function CreateQuiz() {
   const handleCreateQuiz = async (e) => {
     e.preventDefault();
     const token = Cookies.get("token");
-    const apiUrl = import.meta.env.VITE_BACKEND_URL;
     const idsOfQuestions = questionList.map((q) => q.id);
 
     if (questionList.length === 0) return alert("Add some questions");
@@ -53,7 +59,7 @@ export default function CreateQuiz() {
       });
       console.log(response.data);
       toast.success("Created");
-      setQuizzes((quizzes)=>[...quizzes,response.data.quiz])
+      setQuizzes((quizzes) => [...quizzes, response.data.quiz]);
       setActiveTab("quizzes");
     } catch (error) {
       toast.error("Failed");

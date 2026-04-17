@@ -6,11 +6,10 @@ import { useDashboard } from "@/context/dashboardContext";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
 import axios from "axios";
+import { apiUrl } from "@/lib/api";
 
 export default function Quiz() {
   const { setActiveTab, quizzes, setQuizzes } = useDashboard();
-  // eslint-disable-next-line no-unused-vars
-  const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
   const addQuiz = () => {
     setActiveTab("createQuiz");

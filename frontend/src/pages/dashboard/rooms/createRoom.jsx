@@ -15,6 +15,7 @@ import { useDashboard } from "@/context/dashboardContext";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
+import { apiUrl } from "@/lib/api";
 
 export default function CreateRoom() {
   const [values, setValues] = useState(null);
@@ -29,7 +30,6 @@ export default function CreateRoom() {
 
   const handleCreateRoom = async () => {
     const token = Cookies.get("token");
-    const apiUrl = import.meta.env.VITE_BACKEND_URL;
     try {
       const payload = {
         quiz: values[0].value,

@@ -4,6 +4,7 @@ import Spinner from "./Spinner";
 import AIButton from "./AIButton";
 import AIInput from "./AIInput";
 import Cookies from "js-cookie";
+import { apiUrl } from "@/lib/api";
 
 const Chatbox = () => {
   const [messages, setMessages] = useState([
@@ -13,7 +14,6 @@ const Chatbox = () => {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
   const handleSend = async (e) => {
     const token = Cookies.get("token");

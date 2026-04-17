@@ -8,10 +8,10 @@ import axios from "axios";
 
 import Cookies from "js-cookie";
 import { toast } from "sonner";
+import { apiUrl } from "@/lib/api";
 
 export default function Question() {
   const { setActiveTab, questions, setQuestions } = useDashboard();
-  const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
   const addQuestion = () => {
     setActiveTab("createQuestion");

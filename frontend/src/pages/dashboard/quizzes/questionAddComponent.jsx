@@ -17,7 +17,7 @@ const QuestionAddComponent = ({
       >
         {[...list].map((q, i) => (
           <div
-            key={i}
+            key={q.id || q._id || `${q.title}-${i}`}
             className="p-3 border rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"
           >
             <p className="text-sm md:text-base flex-1">

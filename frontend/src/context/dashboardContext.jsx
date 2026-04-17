@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 
 import Cookies from "js-cookie";
 import { useEffect } from "react";
+import { apiUrl } from "@/lib/api";
 
 const dashboardContext = createContext(null);
 
@@ -12,8 +13,6 @@ export const DashboardProvider = ({ children }) => {
   const [questions, setQuestions] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
   const [rooms, setRooms] = useState([]);
-
-  const apiUrl = import.meta.env.VITE_BACKEND_URL;
 
   const fetchQuestions = async () => {
     const token = Cookies.get("token");
@@ -58,6 +57,10 @@ export const DashboardProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    if (!Cookies.get("token")) {
+      return;
+    }
+
     fetchQuestions();
     fetchQuizzes();
     fetchRooms();

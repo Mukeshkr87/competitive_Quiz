@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 import JoinRoomCard from "./joinRoomCard";
 import { useNavigate } from "react-router";
+import { apiUrl } from "@/lib/api";
 
 export default function Room() {
   const { setActiveTab, rooms } = useDashboard();
@@ -26,7 +27,6 @@ export default function Room() {
 
   const handleJoinRoom = async (payload) => {
     const token = Cookies.get("token");
-    const apiUrl = import.meta.env.VITE_BACKEND_URL;
     const roomCode = payload.roomCode;
 
     try {

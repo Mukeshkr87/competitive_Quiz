@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import axios from "axios";
+import { apiUrl } from "@/lib/api";
 
 export default function Signup() {
   const {
@@ -15,7 +16,6 @@ export default function Signup() {
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    const apiUrl = import.meta.env.VITE_BACKEND_URL;
     try {
       await axios.post(`${apiUrl}/api/user/signup`, data);
       toast.success("Registered successfully");
