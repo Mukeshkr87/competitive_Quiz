@@ -21,12 +21,14 @@ import { useState } from "react";
 export default function CreateQuestion() {
   const { register, handleSubmit, control, reset } = useForm();
   const { setActiveTab, setQuestions } = useDashboard();
-  const [mode, setMode] = useState("manual"); // "manual" or "generate"
+  const [mode, setMode] = useState("manual"); // "manual", "generate", or "pdf"
   const [generatedQuestions, setGeneratedQuestions] = useState([]);
   const [topic, setTopic] = useState("");
   const [context, setContext] = useState("");
   const [numberOfQuestions, setNumberOfQuestions] = useState(5);
   const [generating, setGenerating] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const options = [1, 2, 3];
 
   const onSubmit = async (data) => {
@@ -87,6 +89,61 @@ export default function CreateQuestion() {
       toast.error(error.response?.data?.msg || "Failed to generate questions");
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const generateQuestionsFromPDF = async () => {
+    if (!selectedFile) {
+      toast.error("Please select a PDF file");
+      return;
+    }
+
+    const token = Cookies.get("token");
+    const apiUrl = import.meta.env.VITE_BACKEND_URL;
+
+    setUploading(true);
+    setGenerating(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('pdf', selectedFile);
+      formData.append('numberOfQuestions', numberOfQuestions);
+
+      const response = await axios.post(
+        `${apiUrl}/api/talkToAI/generateFromPDF`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      setGeneratedQuestions(response.data.questions);
+      toast.success("Questions generated successfully from PDF!");
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      toast.error(error.response?.data?.msg || "Failed to generate questions from PDF");
+    } finally {
+      setUploading(false);
+      setGenerating(false);
+      setSelectedFile(null);
+    }
+  };
+
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        toast.error("Please select a PDF file");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        toast.error("File size must be less than 10MB");
+        return;
+      }
+      setSelectedFile(file);
     }
   };
 
@@ -166,6 +223,7 @@ export default function CreateQuestion() {
           onClick={() => {
             setMode("manual");
             setGeneratedQuestions([]);
+            setSelectedFile(null);
           }}
           className={`px-6 py-2 rounded-lg font-medium transition ${
             mode === "manual"
@@ -176,7 +234,11 @@ export default function CreateQuestion() {
           Create Manually
         </Button>
         <Button
-          onClick={() => setMode("generate")}
+          onClick={() => {
+            setMode("generate");
+            setGeneratedQuestions([]);
+            setSelectedFile(null);
+          }}
           className={`px-6 py-2 rounded-lg font-medium transition flex items-center gap-2 ${
             mode === "generate"
               ? "bg-indigo-600 text-white"
@@ -185,6 +247,20 @@ export default function CreateQuestion() {
         >
           <Sparkles className="h-4 w-4" />
           AI Generate
+        </Button>
+        <Button
+          onClick={() => {
+            setMode("pdf");
+            setGeneratedQuestions([]);
+            setSelectedFile(null);
+          }}
+          className={`px-6 py-2 rounded-lg font-medium transition flex items-center gap-2 ${
+            mode === "pdf"
+              ? "bg-indigo-600 text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+          }`}
+        >
+          📄 Generate from PDF
         </Button>
       </div>
 
@@ -373,6 +449,161 @@ export default function CreateQuestion() {
                   className="rounded-lg border-gray-300 text-gray-700"
                 >
                   Generate More
+                </Button>
+              </div>
+
+              {generatedQuestions.map((question, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white border border-gray-300 rounded-lg p-6 shadow-sm hover:shadow-md transition"
+                >
+                  <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                    {idx + 1}. {question.title}
+                  </h3>
+
+                  <div className="space-y-3 mb-6">
+                    {question.options.map((option, optIdx) => (
+                      <div
+                        key={optIdx}
+                        className={`p-3 rounded-lg border-2 transition ${
+                          question.ansIndex === optIdx + 1
+                            ? "border-green-500 bg-green-50"
+                            : "border-gray-200 hover:border-gray-300"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="font-semibold text-gray-700">
+                            {String.fromCharCode(65 + optIdx)}.
+                          </span>
+                          <span className="text-gray-800">{option}</span>
+                          {question.ansIndex === optIdx + 1 && (
+                            <span className="ml-auto text-green-600 font-semibold text-sm">
+                              ✓ Correct
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <Button
+                    onClick={() => saveGeneratedQuestion(question)}
+                    className="w-full rounded-lg bg-green-600 text-white hover:bg-green-700"
+                  >
+                    Save This Question
+                  </Button>
+                </div>
+              ))}
+
+              <Button
+                onClick={saveAllGeneratedQuestions}
+                className="w-full rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 py-3 font-semibold text-lg"
+              >
+                Save All Questions ({generatedQuestions.length})
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* PDF GENERATE MODE */}
+      {mode === "pdf" && (
+        <div className="space-y-8">
+          {/* PDF Upload Input */}
+          {generatedQuestions.length === 0 ? (
+            <div className="space-y-6 bg-indigo-50 p-8 rounded-lg">
+              <div className="space-y-2">
+                <Label className="text-indigo-700 font-medium">
+                  Upload PDF File
+                </Label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-400 transition-colors">
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                    id="pdf-upload"
+                  />
+                  <label htmlFor="pdf-upload" className="cursor-pointer">
+                    <div className="space-y-4">
+                      <div className="text-4xl">📄</div>
+                      <div className="text-gray-600">
+                        {selectedFile ? (
+                          <div className="space-y-2">
+                            <p className="font-medium text-green-600">File selected: {selectedFile.name}</p>
+                            <p className="text-sm">Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="font-medium">Click to upload PDF</p>
+                            <p className="text-sm">or drag and drop</p>
+                            <p className="text-xs text-gray-500 mt-2">Max file size: 10MB</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="pdf-count" className="text-indigo-700 font-medium">
+                  Number of Questions
+                </Label>
+                <Input
+                  id="pdf-count"
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={numberOfQuestions}
+                  onChange={(e) => setNumberOfQuestions(parseInt(e.target.value))}
+                  className="rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+                />
+              </div>
+
+              <div className="flex gap-4">
+                <Button
+                  onClick={() => setMode("manual")}
+                  variant="outline"
+                  className="rounded-lg border-gray-300 text-gray-700 hover:bg-gray-100"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={generateQuestionsFromPDF}
+                  disabled={generating || !selectedFile}
+                  className="rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 flex items-center gap-2"
+                >
+                  {generating ? (
+                    <>
+                      <div className="animate-spin">⏳</div>
+                      {uploading ? "Uploading..." : "Generating..."}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" />
+                      Generate from PDF
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            // Display Generated Questions from PDF
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-indigo-700">
+                  Generated Questions from PDF ({generatedQuestions.length})
+                </h2>
+                <Button
+                  onClick={() => {
+                    setGeneratedQuestions([]);
+                    setSelectedFile(null);
+                  }}
+                  variant="outline"
+                  className="rounded-lg border-gray-300 text-gray-700"
+                >
+                  Upload Another PDF
                 </Button>
               </div>
 

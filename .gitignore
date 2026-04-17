@@ -19,6 +19,9 @@ pnpm-debug.log*
 frontend/.env.local
 server/.env
 
+# Uploads directory
+**/uploads
+
 # OS and editor files
 .DS_Store
 Thumbs.db

@@ -4,7 +4,7 @@ export const auth = (req, res, next) => {
   const token = req.headers.authorization;
   const bearerToken = token.split(" ")[1];
 
-  if (!token || bearerToken.lenth === 0) {
+  if (!token || bearerToken.length === 0) {
     return res.status(401).json({
       msg: "unauthorised",
     });
