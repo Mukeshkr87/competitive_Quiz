@@ -34,13 +34,13 @@ export default function Question() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
+    <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-bold">Questions</h2>
         <Button
           onClick={addQuestion}
           size="lg"
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+          className="flex items-center gap-2 rounded-lg bg-slate-950 px-4 py-2 text-white transition hover:bg-slate-800 dark:bg-sky-400 dark:text-slate-950 dark:hover:bg-sky-300"
         >
           <Plus size={18} />
           Create Question

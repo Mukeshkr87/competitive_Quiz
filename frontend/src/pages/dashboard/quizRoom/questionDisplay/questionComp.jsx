@@ -31,19 +31,17 @@ export default function QuestionComp({
           onComplete={() => (setEnabled(false), { shouldRepeat: false })}
         >
           {({ remainingTime }) => (
-            <span className="text-lg font-semibold text-gray-800">
+            <span className="text-lg font-semibold text-slate-800">
               {remainingTime}s
             </span>
           )}
         </CountdownCircleTimer>
       </div>
 
-      {/* Question */}
-      <h2 className="text-xl font-semibold text-gray-800 mb-6">
+      <h2 className="mb-6 text-xl font-semibold text-slate-800">
         {currQuestion.title || "Loading question..."}
       </h2>
 
-      {/* Options */}
       <div className="space-y-3">
         {currQuestion.options?.map((opt, idx) => (
           <motion.button
@@ -58,8 +56,8 @@ export default function QuestionComp({
             className={`w-full text-left px-4 py-3 rounded-xl border transition-all
                 ${
                   selectedOption === opt
-                    ? "bg-indigo-600 text-white border-indigo-600 shadow-md"
-                    : "bg-white/90 hover:bg-indigo-50 border-gray-200"
+                    ? "border-indigo-600 bg-indigo-600 text-white shadow-md"
+                    : "border-slate-200 bg-white text-slate-800 shadow-sm hover:bg-indigo-50 hover:text-slate-900"
                 }`}
           >
             {opt}
@@ -67,11 +65,9 @@ export default function QuestionComp({
         ))}
       </div>
 
-      {/* Submit */}
-
       <div className="mt-8">
         <Button
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-xl"
+          className="rounded-xl bg-indigo-600 px-6 py-2 text-white hover:bg-indigo-700"
           disabled={!enabled}
           onClick={handleSubmit}
         >

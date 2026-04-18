@@ -1,21 +1,17 @@
-import {
-  Home,
-  Users,
-  ClipboardList,
-  HelpCircle,
-  Trophy,
-  Settings,
-} from "lucide-react";
+import { Users, ClipboardList, HelpCircle, Settings } from "lucide-react";
 import { useDashboard } from "@/context/dashboardContext";
 import { useNavigate } from "react-router";
 import Cookies from "js-cookie";
+import ThemeToggle from "@/components/custom/themeToggle";
 
 const SidebarButton = ({ setActiveTab, activeTab, icon, title }) => {
   return (
     <button
       onClick={() => setActiveTab(title)}
-      className={`flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg transition ${
-        activeTab === title ? "bg-white text-indigo-600" : "hover:bg-indigo-500"
+      className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition ${
+        activeTab === title
+          ? "bg-sky-400 text-slate-950 shadow-lg"
+          : "text-slate-300 hover:bg-white/8 hover:text-white"
       }`}
     >
       {icon} {title.charAt(0).toUpperCase() + title.slice(1)}
@@ -33,11 +29,22 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 h-full bg-gradient-to-b from-indigo-600 to-purple-600 text-white flex flex-col justify-between">
+    <aside className="flex h-full w-72 flex-col justify-between bg-slate-950 text-white">
       <div>
-        <div className="p-6 text-2xl font-bold">QuizMaster</div>
+        <div className="border-b border-white/10 px-6 py-6">
+          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">
+            Live quiz builder
+          </p>
+          <div className="mt-2 text-2xl font-black tracking-tight">
+            QuizCraft-Ai
+          </div>
+          <p className="mt-2 text-sm text-slate-400">
+            Create, host, and manage multiplayer sessions.
+          </p>
+          <ThemeToggle className="mt-4 w-full justify-center border-white/10 bg-white/5 text-slate-100 hover:bg-white/10" />
+        </div>
         <nav className="flex-1">
-          <ul className="space-y-2 px-4">
+          <ul className="space-y-2 px-4 py-6">
             <li>
               <SidebarButton
                 activeTab={activeTab}
@@ -77,7 +84,7 @@ export default function Sidebar() {
       <div className="p-4">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-indigo-500 transition"
+          className="flex w-full items-center gap-2 rounded-2xl px-4 py-3 text-left text-slate-300 transition hover:bg-white/8 hover:text-white"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

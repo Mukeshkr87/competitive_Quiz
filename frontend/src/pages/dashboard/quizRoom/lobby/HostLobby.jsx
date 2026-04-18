@@ -4,18 +4,15 @@ import { Button } from "@/components/ui/button";
 const HostLobby = ({ startQuiz, players, roomCode }) => {
   console.log(players, "players");
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-800 via-purple-700 to-pink-600 p-4">
-      <div className="w-full max-w-md bg-white/90 backdrop-blur-md rounded-2xl shadow-lg p-6 text-center">
-        {/* Title */}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-slate-950 via-sky-950 to-cyan-900 p-4">
+      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/90 p-6 text-center shadow-lg backdrop-blur-md">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Host Lobby</h1>
 
-        {/* Room Code */}
         <p className="text-gray-500">Share this code with players:</p>
         <div className="text-4xl font-bold text-blue-600 tracking-widest mt-2 mb-4">
           {roomCode}
         </div>
 
-        {/* Players List */}
         <div className="border-t border-gray-200 pt-4">
           <h2 className="text-lg font-semibold text-gray-700 mb-3">
             Players Joined
@@ -33,9 +30,8 @@ const HostLobby = ({ startQuiz, players, roomCode }) => {
           </div>
         </div>
 
-        {/* Start Button */}
         <Button
-          className="mt-8 w-full bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition active:scale-95"
+          className="mt-8 w-full rounded-xl bg-slate-950 text-white transition active:scale-95 hover:bg-slate-800"
           onClick={startQuiz}
         >
           Start Game

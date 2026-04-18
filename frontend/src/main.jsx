@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-// import App from "./App.jsx";
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import Login from "./pages/login/login.jsx";
@@ -11,6 +10,7 @@ import Dashboard from "./pages/dashboard/dashboard.jsx";
 import { DashboardProvider } from "./context/dashboardContext.jsx";
 import { Toaster } from "sonner";
 import QuizRoom from "./pages/dashboard/quizRoom/QuizRoom.jsx";
+import { ThemeProvider } from "./context/themeContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -45,7 +45,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
-    <Toaster position="top-center" richColors duration={1000} />
+    <ThemeProvider>
+      <RouterProvider router={router} />
+      <Toaster position="top-center" richColors duration={1000} />
+    </ThemeProvider>
   </StrictMode>
 );

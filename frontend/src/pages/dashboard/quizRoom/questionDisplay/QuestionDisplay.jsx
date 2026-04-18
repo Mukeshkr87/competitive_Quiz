@@ -74,9 +74,7 @@ const QuestionDisplay = ({ duration = 30, questions, socket, startTime }) => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 px-4">
-      <div className="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl p-8 w-full max-w-lg text-center">
-        {/* Timer Circle */}
-
+      <div className="w-full max-w-lg rounded-2xl bg-white/88 p-8 text-center shadow-xl backdrop-blur-md">
         {handleComponentRender()}
       </div>
     </div>
