@@ -12,6 +12,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { useDashboard } from "@/context/dashboardContext";
+import { useTheme } from "@/context/themeContext";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
@@ -23,11 +24,13 @@ export default function CreateRoom() {
   const [quizDuration, setQuizDuration] = useState("30");
 
   const { quizzes, setActiveTab, fetchRooms } = useDashboard();
+  const { theme } = useTheme();
 
   const options = quizzes.map((q) => ({
     title: q.title,
     value: q._id,
   }));
+  const isDarkMode = theme === "dark";
 
   const handleCreateRoom = async () => {
     const token = Cookies.get("token");
@@ -61,13 +64,13 @@ export default function CreateRoom() {
   };
 
   return (
-    <div className="-m-6 flex justify-center items-center min-h-screen">
-      <Card className="w-full max-w-md p-6 shadow-xl bg-white border border-gray-200">
+    <div className="-m-6 flex min-h-screen items-center justify-center rounded-[2rem] border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+      <Card className="w-full max-w-md border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-950/60">
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold text-center text-gray-900">
+          <CardTitle className="text-center text-2xl font-semibold text-slate-900 dark:text-slate-100">
             Create a Room
           </CardTitle>
-          <CardDescription className="text-center text-gray-500">
+          <CardDescription className="text-center text-slate-500 dark:text-slate-400">
             Set up your room and invite others to play your quiz.
           </CardDescription>
         </CardHeader>
@@ -75,7 +78,10 @@ export default function CreateRoom() {
         <CardContent className="space-y-6">
           {/* Max Players Field */}
           <div className="space-y-2">
-            <Label htmlFor="maxPlayers" className="text-gray-800">
+            <Label
+              htmlFor="maxPlayers"
+              className="text-slate-800 dark:text-slate-200"
+            >
               Max Players
             </Label>
             <Input
@@ -84,12 +90,15 @@ export default function CreateRoom() {
               placeholder="e.g. 5"
               value={maxPlayers}
               onChange={(e) => setMaxPlayers(e.target.value)}
-              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400"
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-400"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="quizDuration" className="text-gray-800">
+            <Label
+              htmlFor="quizDuration"
+              className="text-slate-800 dark:text-slate-200"
+            >
               Quiz Time (seconds)
             </Label>
             <Input
@@ -100,24 +109,75 @@ export default function CreateRoom() {
               placeholder="e.g. 30"
               value={quizDuration}
               onChange={(e) => setQuizDuration(e.target.value)}
-              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400"
+              className="border-slate-300 bg-white text-slate-900 placeholder:text-slate-500 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-400"
             />
           </div>
 
           {/* Quiz Selector (react-select) */}
           <div className="space-y-2">
-            <Label htmlFor="quizSelect" className="text-gray-800">
+            <Label
+              htmlFor="quizSelect"
+              className="text-slate-800 dark:text-slate-200"
+            >
               Select Quiz
             </Label>
-            <Select
-              multi
-              closeOnSelect
-              placeholder="Search and select a quiz..."
-              options={options}
-              onChange={(values) => setValues(values)}
-              labelField="title"
-              valueField="value"
-            />
+            <div className="rounded-lg border border-slate-300 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
+              <Select
+                multi
+                closeOnSelect
+                placeholder="Search and select a quiz..."
+                options={options}
+                onChange={(values) => setValues(values)}
+                labelField="title"
+                valueField="value"
+                style={{
+                  backgroundColor: "transparent",
+                  border: "none",
+                  color: isDarkMode ? "#f8fafc" : "#0f172a",
+                  boxShadow: "none",
+                }}
+                dropdownStyle={{
+                  background: isDarkMode ? "#020617" : "#ffffff",
+                  border: `1px solid ${isDarkMode ? "#334155" : "#cbd5e1"}`,
+                  color: isDarkMode ? "#f8fafc" : "#0f172a",
+                  borderRadius: "0.75rem",
+                  boxShadow: "0 10px 30px rgba(15, 23, 42, 0.18)",
+                }}
+                itemRenderer={({ item, methods }) => (
+                  <div
+                    key={item.value}
+                    onClick={() => methods.addItem(item)}
+                    style={{
+                      color: isDarkMode ? "#f8fafc" : "#0f172a",
+                      backgroundColor: "transparent",
+                    }}
+                    className="cursor-pointer rounded-lg px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    {item.title}
+                  </div>
+                )}
+                contentRenderer={({ props, state }) => {
+                  const selectedCount = state.values.length;
+
+                  if (!selectedCount) {
+                    return (
+                      <span className="text-slate-500 dark:text-slate-400">
+                        {props.placeholder}
+                      </span>
+                    );
+                  }
+
+                  return (
+                    <span className="text-slate-900 dark:text-slate-100">
+                      {state.values.map((item) => item.title).join(", ")}
+                    </span>
+                  );
+                }}
+                color="#4f46e5"
+                dropdownHandle={true}
+                dropdownGap={0}
+              />
+            </div>
           </div>
         </CardContent>
 

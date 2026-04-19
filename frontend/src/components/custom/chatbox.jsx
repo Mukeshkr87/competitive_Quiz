@@ -51,10 +51,12 @@ const Chatbox = () => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col  bg-gray-50 font-inter">
-      <div className="flex flex-col h-[70vh] w-full max-w-2xl mx-auto border border-gray-200 rounded-2xl shadow-lg bg-white">
-        <header className="p-5 border-b border-gray-200 bg-white rounded-t-2xl">
-          <h1 className="text-xl font-semibold text-gray-800">AI Assistant</h1>
+    <div className="flex flex-col bg-slate-50 font-inter dark:bg-transparent">
+      <div className="mx-auto flex h-[70vh] w-full max-w-2xl flex-col rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-950">
+        <header className="rounded-t-2xl border-b border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950">
+          <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">
+            AI Assistant
+          </h1>
         </header>
 
         {/* Message Container */}
@@ -70,7 +72,7 @@ const Chatbox = () => {
                 className={`max-w-[70%] px-4 py-2 rounded-lg shadow-sm ${
                   message.sender === "user"
                     ? "bg-blue-600 text-white rounded-br-none"
-                    : "bg-gray-100 text-gray-800 rounded-bl-none"
+                    : "bg-slate-100 text-slate-800 rounded-bl-none dark:bg-slate-800 dark:text-slate-100"
                 }`}
               >
                 {message.text}
@@ -85,10 +87,10 @@ const Chatbox = () => {
 
         <form
           onSubmit={handleSend}
-          className="p-5 border-t border-gray-200 flex items-center gap-2 bg-white rounded-b-2xl"
+          className="flex items-center gap-2 rounded-b-2xl border-t border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-950"
         >
           <AIInput
-            className="flex-1 px-4 py-2 text-gray-700"
+            className="flex-1"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."

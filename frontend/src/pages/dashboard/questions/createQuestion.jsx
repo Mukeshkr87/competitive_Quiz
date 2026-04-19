@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Bot, Sparkles } from "lucide-react";
+import { Bot, Sparkles, FileText } from "lucide-react";
 import Chatbox from "@/components/custom/chatbox";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -22,7 +22,7 @@ import { apiUrl } from "@/lib/api";
 export default function CreateQuestion() {
   const { register, handleSubmit, control, reset } = useForm();
   const { setActiveTab, setQuestions } = useDashboard();
-  const [mode, setMode] = useState("manual"); // "manual", "generate", or "pdf"
+  const [mode, setMode] = useState("manual");
   const [generatedQuestions, setGeneratedQuestions] = useState([]);
   const [topic, setTopic] = useState("");
   const [context, setContext] = useState("");
@@ -35,10 +35,9 @@ export default function CreateQuestion() {
   const onSubmit = async (data) => {
     const token = Cookies.get("token");
     try {
-      let options = [data.option1, data.option2, data.option3];
       const payload = {
         title: data.title,
-        options,
+        options: [data.option1, data.option2, data.option3],
         ansIndex: data.ansIndex,
       };
 
@@ -64,8 +63,8 @@ export default function CreateQuestion() {
     }
 
     const token = Cookies.get("token");
-    
     setGenerating(true);
+
     try {
       const response = await axios.post(
         `${apiUrl}/api/talkToAI/generateQuestions`,
@@ -98,14 +97,13 @@ export default function CreateQuestion() {
     }
 
     const token = Cookies.get("token");
-
     setUploading(true);
     setGenerating(true);
 
     try {
       const formData = new FormData();
-      formData.append('pdf', selectedFile);
-      formData.append('numberOfQuestions', numberOfQuestions);
+      formData.append("pdf", selectedFile);
+      formData.append("numberOfQuestions", numberOfQuestions);
 
       const response = await axios.post(
         `${apiUrl}/api/talkToAI/generateFromPDF`,
@@ -113,7 +111,7 @@ export default function CreateQuestion() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -122,7 +120,9 @@ export default function CreateQuestion() {
       toast.success("Questions generated successfully from PDF!");
     } catch (error) {
       console.error("PDF generation error:", error);
-      toast.error(error.response?.data?.msg || "Failed to generate questions from PDF");
+      toast.error(
+        error.response?.data?.msg || "Failed to generate questions from PDF"
+      );
     } finally {
       setUploading(false);
       setGenerating(false);
@@ -133,11 +133,11 @@ export default function CreateQuestion() {
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      if (file.type !== 'application/pdf') {
+      if (file.type !== "application/pdf") {
         toast.error("Please select a PDF file");
         return;
       }
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      if (file.size > 10 * 1024 * 1024) {
         toast.error("File size must be less than 10MB");
         return;
       }
@@ -161,9 +161,7 @@ export default function CreateQuestion() {
       });
 
       setQuestions((q) => [...q, response.data.question]);
-      setGeneratedQuestions((prev) =>
-        prev.filter((q) => q !== question)
-      );
+      setGeneratedQuestions((prev) => prev.filter((q) => q !== question));
       toast.success("Question saved!");
     } catch (error) {
       console.error("Error saving question:", error);
@@ -173,7 +171,7 @@ export default function CreateQuestion() {
 
   const saveAllGeneratedQuestions = async () => {
     const token = Cookies.get("token");
-    
+
     try {
       let savedCount = 0;
       for (const question of generatedQuestions) {
@@ -188,10 +186,11 @@ export default function CreateQuestion() {
             Authorization: `Bearer ${token}`,
           },
         });
+
         setQuestions((q) => [...q, response.data.question]);
         savedCount++;
       }
-      
+
       setGeneratedQuestions([]);
       toast.success(`${savedCount} questions saved!`);
       setActiveTab("questions");
@@ -202,29 +201,27 @@ export default function CreateQuestion() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      {/* Heading */}
+    <div className="mx-auto max-w-4xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-indigo-700">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
           Create Questions
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="mt-2 text-slate-600 dark:text-slate-400">
           Create questions manually or generate them using AI.
         </p>
       </div>
 
-      {/* Mode Selector */}
-      <div className="mb-8 flex gap-4">
+      <div className="mb-8 flex flex-wrap gap-4">
         <Button
           onClick={() => {
             setMode("manual");
             setGeneratedQuestions([]);
             setSelectedFile(null);
           }}
-          className={`px-6 py-2 rounded-lg font-medium transition ${
+          className={`rounded-lg px-6 py-2 font-medium transition ${
             mode === "manual"
               ? "bg-indigo-600 text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              : "bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           }`}
         >
           Create Manually
@@ -235,10 +232,10 @@ export default function CreateQuestion() {
             setGeneratedQuestions([]);
             setSelectedFile(null);
           }}
-          className={`px-6 py-2 rounded-lg font-medium transition flex items-center gap-2 ${
+          className={`flex items-center gap-2 rounded-lg px-6 py-2 font-medium transition ${
             mode === "generate"
               ? "bg-indigo-600 text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              : "bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           }`}
         >
           <Sparkles className="h-4 w-4" />
@@ -250,48 +247,46 @@ export default function CreateQuestion() {
             setGeneratedQuestions([]);
             setSelectedFile(null);
           }}
-          className={`px-6 py-2 rounded-lg font-medium transition flex items-center gap-2 ${
+          className={`flex items-center gap-2 rounded-lg px-6 py-2 font-medium transition ${
             mode === "pdf"
               ? "bg-indigo-600 text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              : "bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           }`}
         >
-          📄 Generate from PDF
+          <FileText className="h-4 w-4" />
+          Generate from PDF
         </Button>
       </div>
 
-      {/* MANUAL MODE */}
       {mode === "manual" && (
         <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
-          {/* Question Title */}
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-indigo-700 font-medium">
+            <Label htmlFor="title" className="font-medium text-slate-800 dark:text-slate-200">
               Question Title
             </Label>
             <Input
               id="title"
               type="text"
               placeholder="Enter your question here..."
-              className="rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+              className="rounded-lg border-slate-300 bg-white text-slate-900 placeholder:text-slate-500 focus:border-indigo-600 focus:ring-indigo-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-400"
               {...register("title", { required: true })}
             />
           </div>
 
-          {/* Options Section */}
           <div className="space-y-4">
-            <Label className="text-indigo-700 font-medium">
+            <Label className="font-medium text-slate-800 dark:text-slate-200">
               Options (choose the correct one)
             </Label>
 
             {options.map((option, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition"
+                className="flex items-center gap-3 rounded-lg p-3 transition hover:bg-slate-50 dark:hover:bg-slate-800/60"
               >
                 <Input
                   type="text"
                   placeholder={`Option ${option}`}
-                  className="flex-1 rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+                  className="flex-1 rounded-lg border-slate-300 bg-white text-slate-900 placeholder:text-slate-500 focus:border-indigo-600 focus:ring-indigo-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-400"
                   {...register(`option${option}`, { required: true })}
                 />
 
@@ -308,17 +303,18 @@ export default function CreateQuestion() {
                     />
                   )}
                 />
-                <Label className="text-sm text-gray-600">Correct</Label>
+                <Label className="text-sm text-slate-600 dark:text-slate-400">
+                  Correct
+                </Label>
               </div>
             ))}
           </div>
 
-          {/* Buttons */}
           <div className="flex justify-end gap-4">
             <Button
               type="button"
               variant="outline"
-              className="rounded-lg border-gray-300 text-gray-700 hover:bg-gray-100"
+              className="rounded-lg border-slate-300 bg-white text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
               onClick={() => setActiveTab("questions")}
             >
               Cancel
@@ -333,19 +329,17 @@ export default function CreateQuestion() {
             <Dialog>
               <DialogTrigger asChild>
                 <Button
-                  className="cursor-pointer rounded-lg bg-pink-500 text-white hover:bg-pink-600 hover:text-white shadow-md"
+                  className="cursor-pointer rounded-lg bg-pink-500 text-white shadow-md hover:bg-pink-600 hover:text-white"
                   variant="outline"
                   type="button"
                 >
-                  <Bot className="h-4 w-4 mr-2" />
+                  <Bot className="mr-2 h-4 w-4" />
                   Ask AI
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-2xl p-6">
+              <DialogContent className="p-6 sm:max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle className="text-xl font-bold">
-                    Talk to AI
-                  </DialogTitle>
+                  <DialogTitle className="text-xl font-bold">Talk to AI</DialogTitle>
                 </DialogHeader>
                 <div className="mt-4">
                   <Chatbox />
@@ -356,34 +350,32 @@ export default function CreateQuestion() {
         </form>
       )}
 
-      {/* AI GENERATE MODE */}
       {mode === "generate" && (
         <div className="space-y-8">
-          {/* Topic and Context Input */}
           {generatedQuestions.length === 0 ? (
-            <div className="space-y-6 bg-indigo-50 p-8 rounded-lg">
+            <div className="space-y-6 rounded-lg border border-slate-200 bg-slate-50 p-8 dark:border-slate-700 dark:bg-slate-950/60">
               <div className="space-y-2">
-                <Label htmlFor="topic" className="text-indigo-700 font-medium">
+                <Label htmlFor="topic" className="font-medium text-slate-800 dark:text-slate-200">
                   Topic
                 </Label>
                 <Input
                   id="topic"
                   type="text"
                   placeholder="e.g., React Hooks, Python Functions, World History"
-                  className="rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+                  className="rounded-lg border-slate-300 bg-white text-slate-900 placeholder:text-slate-500 focus:border-indigo-600 focus:ring-indigo-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-400"
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="context" className="text-indigo-700 font-medium">
+                <Label htmlFor="context" className="font-medium text-slate-800 dark:text-slate-200">
                   Context / Additional Details
                 </Label>
                 <textarea
                   id="context"
                   placeholder="Provide context or details about the topic (e.g., difficulty level, specific concepts to focus on)"
-                  className="w-full p-3 rounded-lg border border-gray-300 focus:border-indigo-600 focus:ring-indigo-600 focus:ring-1"
+                  className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-500 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-400"
                   rows="4"
                   value={context}
                   onChange={(e) => setContext(e.target.value)}
@@ -391,7 +383,7 @@ export default function CreateQuestion() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="count" className="text-indigo-700 font-medium">
+                <Label htmlFor="count" className="font-medium text-slate-800 dark:text-slate-200">
                   Number of Questions
                 </Label>
                 <Input
@@ -401,7 +393,7 @@ export default function CreateQuestion() {
                   max="20"
                   value={numberOfQuestions}
                   onChange={(e) => setNumberOfQuestions(parseInt(e.target.value))}
-                  className="rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+                  className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                 />
               </div>
 
@@ -409,18 +401,18 @@ export default function CreateQuestion() {
                 <Button
                   onClick={() => setMode("manual")}
                   variant="outline"
-                  className="rounded-lg border-gray-300 text-gray-700 hover:bg-gray-100"
+                  className="rounded-lg border-slate-300 bg-white text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                   Back
                 </Button>
                 <Button
                   onClick={generateQuestionsFromTopic}
                   disabled={generating}
-                  className="rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 flex items-center gap-2"
+                  className="flex items-center gap-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
                 >
                   {generating ? (
                     <>
-                      <div className="animate-spin">⏳</div>
+                      <div className="animate-spin">...</div>
                       Generating...
                     </>
                   ) : (
@@ -433,16 +425,15 @@ export default function CreateQuestion() {
               </div>
             </div>
           ) : (
-            // Display Generated Questions
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-indigo-700">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                   Generated Questions ({generatedQuestions.length})
                 </h2>
                 <Button
                   onClick={() => setGeneratedQuestions([])}
                   variant="outline"
-                  className="rounded-lg border-gray-300 text-gray-700"
+                  className="rounded-lg border-slate-300 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200"
                 >
                   Generate More
                 </Button>
@@ -451,30 +442,32 @@ export default function CreateQuestion() {
               {generatedQuestions.map((question, idx) => (
                 <div
                   key={idx}
-                  className="bg-white border border-gray-300 rounded-lg p-6 shadow-sm hover:shadow-md transition"
+                  className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md dark:border-slate-700 dark:bg-slate-950/60"
                 >
-                  <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                  <h3 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-100">
                     {idx + 1}. {question.title}
                   </h3>
 
-                  <div className="space-y-3 mb-6">
+                  <div className="mb-6 space-y-3">
                     {question.options.map((option, optIdx) => (
                       <div
                         key={optIdx}
-                        className={`p-3 rounded-lg border-2 transition ${
+                        className={`rounded-lg border-2 p-3 transition ${
                           question.ansIndex === optIdx + 1
                             ? "border-green-500 bg-green-50"
-                            : "border-gray-200 hover:border-gray-300"
+                            : "border-slate-200 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600"
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <span className="font-semibold text-gray-700">
+                          <span className="font-semibold text-slate-700 dark:text-slate-300">
                             {String.fromCharCode(65 + optIdx)}.
                           </span>
-                          <span className="text-gray-800">{option}</span>
+                          <span className="text-slate-800 dark:text-slate-100">
+                            {option}
+                          </span>
                           {question.ansIndex === optIdx + 1 && (
-                            <span className="ml-auto text-green-600 font-semibold text-sm">
-                              ✓ Correct
+                            <span className="ml-auto text-sm font-semibold text-green-600">
+                              Correct
                             </span>
                           )}
                         </div>
@@ -493,7 +486,7 @@ export default function CreateQuestion() {
 
               <Button
                 onClick={saveAllGeneratedQuestions}
-                className="w-full rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 py-3 font-semibold text-lg"
+                className="w-full rounded-lg bg-indigo-600 py-3 text-lg font-semibold text-white hover:bg-indigo-700"
               >
                 Save All Questions ({generatedQuestions.length})
               </Button>
@@ -502,17 +495,15 @@ export default function CreateQuestion() {
         </div>
       )}
 
-      {/* PDF GENERATE MODE */}
       {mode === "pdf" && (
         <div className="space-y-8">
-          {/* PDF Upload Input */}
           {generatedQuestions.length === 0 ? (
-            <div className="space-y-6 bg-indigo-50 p-8 rounded-lg">
+            <div className="space-y-6 rounded-lg border border-slate-200 bg-slate-50 p-8 dark:border-slate-700 dark:bg-slate-950/60">
               <div className="space-y-2">
-                <Label className="text-indigo-700 font-medium">
+                <Label className="font-medium text-slate-800 dark:text-slate-200">
                   Upload PDF File
                 </Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-400 transition-colors">
+                <div className="rounded-lg border-2 border-dashed border-slate-300 p-8 text-center transition-colors hover:border-indigo-400 dark:border-slate-700 dark:bg-slate-950/70">
                   <input
                     type="file"
                     accept=".pdf"
@@ -522,18 +513,26 @@ export default function CreateQuestion() {
                   />
                   <label htmlFor="pdf-upload" className="cursor-pointer">
                     <div className="space-y-4">
-                      <div className="text-4xl">📄</div>
-                      <div className="text-gray-600">
+                      <div className="text-4xl text-slate-700 dark:text-slate-300">
+                        PDF
+                      </div>
+                      <div className="text-slate-600 dark:text-slate-400">
                         {selectedFile ? (
                           <div className="space-y-2">
-                            <p className="font-medium text-green-600">File selected: {selectedFile.name}</p>
-                            <p className="text-sm">Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                            <p className="font-medium text-green-600">
+                              File selected: {selectedFile.name}
+                            </p>
+                            <p className="text-sm">
+                              Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                            </p>
                           </div>
                         ) : (
                           <div>
                             <p className="font-medium">Click to upload PDF</p>
                             <p className="text-sm">or drag and drop</p>
-                            <p className="text-xs text-gray-500 mt-2">Max file size: 10MB</p>
+                            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                              Max file size: 10MB
+                            </p>
                           </div>
                         )}
                       </div>
@@ -543,7 +542,7 @@ export default function CreateQuestion() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="pdf-count" className="text-indigo-700 font-medium">
+                <Label htmlFor="pdf-count" className="font-medium text-slate-800 dark:text-slate-200">
                   Number of Questions
                 </Label>
                 <Input
@@ -553,7 +552,7 @@ export default function CreateQuestion() {
                   max="20"
                   value={numberOfQuestions}
                   onChange={(e) => setNumberOfQuestions(parseInt(e.target.value))}
-                  className="rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+                  className="rounded-lg border-slate-300 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
                 />
               </div>
 
@@ -561,18 +560,18 @@ export default function CreateQuestion() {
                 <Button
                   onClick={() => setMode("manual")}
                   variant="outline"
-                  className="rounded-lg border-gray-300 text-gray-700 hover:bg-gray-100"
+                  className="rounded-lg border-slate-300 bg-white text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                   Back
                 </Button>
                 <Button
                   onClick={generateQuestionsFromPDF}
                   disabled={generating || !selectedFile}
-                  className="rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 flex items-center gap-2"
+                  className="flex items-center gap-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
                 >
                   {generating ? (
                     <>
-                      <div className="animate-spin">⏳</div>
+                      <div className="animate-spin">...</div>
                       {uploading ? "Uploading..." : "Generating..."}
                     </>
                   ) : (
@@ -585,10 +584,9 @@ export default function CreateQuestion() {
               </div>
             </div>
           ) : (
-            // Display Generated Questions from PDF
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold text-indigo-700">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                   Generated Questions from PDF ({generatedQuestions.length})
                 </h2>
                 <Button
@@ -597,7 +595,7 @@ export default function CreateQuestion() {
                     setSelectedFile(null);
                   }}
                   variant="outline"
-                  className="rounded-lg border-gray-300 text-gray-700"
+                  className="rounded-lg border-slate-300 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200"
                 >
                   Upload Another PDF
                 </Button>
@@ -606,30 +604,32 @@ export default function CreateQuestion() {
               {generatedQuestions.map((question, idx) => (
                 <div
                   key={idx}
-                  className="bg-white border border-gray-300 rounded-lg p-6 shadow-sm hover:shadow-md transition"
+                  className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md dark:border-slate-700 dark:bg-slate-950/60"
                 >
-                  <h3 className="text-lg font-semibold mb-4 text-gray-800">
+                  <h3 className="mb-4 text-lg font-semibold text-slate-800 dark:text-slate-100">
                     {idx + 1}. {question.title}
                   </h3>
 
-                  <div className="space-y-3 mb-6">
+                  <div className="mb-6 space-y-3">
                     {question.options.map((option, optIdx) => (
                       <div
                         key={optIdx}
-                        className={`p-3 rounded-lg border-2 transition ${
+                        className={`rounded-lg border-2 p-3 transition ${
                           question.ansIndex === optIdx + 1
                             ? "border-green-500 bg-green-50"
-                            : "border-gray-200 hover:border-gray-300"
+                            : "border-slate-200 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600"
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <span className="font-semibold text-gray-700">
+                          <span className="font-semibold text-slate-700 dark:text-slate-300">
                             {String.fromCharCode(65 + optIdx)}.
                           </span>
-                          <span className="text-gray-800">{option}</span>
+                          <span className="text-slate-800 dark:text-slate-100">
+                            {option}
+                          </span>
                           {question.ansIndex === optIdx + 1 && (
-                            <span className="ml-auto text-green-600 font-semibold text-sm">
-                              ✓ Correct
+                            <span className="ml-auto text-sm font-semibold text-green-600">
+                              Correct
                             </span>
                           )}
                         </div>
@@ -648,7 +648,7 @@ export default function CreateQuestion() {
 
               <Button
                 onClick={saveAllGeneratedQuestions}
-                className="w-full rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 py-3 font-semibold text-lg"
+                className="w-full rounded-lg bg-indigo-600 py-3 text-lg font-semibold text-white hover:bg-indigo-700"
               >
                 Save All Questions ({generatedQuestions.length})
               </Button>

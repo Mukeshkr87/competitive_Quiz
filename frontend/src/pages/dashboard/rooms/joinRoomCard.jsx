@@ -9,9 +9,9 @@ export default function JoinRoomCard({ handleJoinRoom }) {
 
   return (
     <div className="mt-8 flex justify-center">
-      <Card className="w-full max-w-sm shadow-md rounded-2xl border border-indigo-100 bg-white/90 backdrop-blur-md">
+      <Card className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white/95 shadow-md backdrop-blur-md dark:border-slate-700 dark:bg-slate-950/80">
         <CardHeader>
-          <h2 className="text-lg font-semibold text-indigo-700 text-center">
+          <h2 className="text-center text-lg font-semibold text-slate-900 dark:text-slate-100">
             Enter Room Code
           </h2>
         </CardHeader>
@@ -21,7 +21,7 @@ export default function JoinRoomCard({ handleJoinRoom }) {
             <div className="space-y-2">
               <Label
                 htmlFor="roomCode"
-                className="text-sm font-medium text-gray-700"
+                className="text-sm font-medium text-slate-700 dark:text-slate-300"
               >
                 Room Code
               </Label>
