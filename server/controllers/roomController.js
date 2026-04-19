@@ -4,11 +4,13 @@ import { Room } from "../models/roomModel.js";
 
 export const createRoom = async (req, res) => {
   try {
-    const { maxPlayers, quiz } = req.body;
+    const { maxPlayers, quiz, quizDuration } = req.body;
 
     const createdBy = req.user.user.id;
+    const parsedMaxPlayers = Number(maxPlayers);
+    const parsedQuizDuration = Number(quizDuration);
 
-    if (!createdBy || !maxPlayers || !quiz) {
+    if (!createdBy || !parsedMaxPlayers || !quiz || !parsedQuizDuration) {
       return res.status(400).json({
         msg: "Missing Fields",
       });
@@ -22,9 +24,21 @@ export const createRoom = async (req, res) => {
       });
     }
 
-    if (maxPlayers > 15) {
+    if (parsedMaxPlayers > 15) {
       return res.status(400).json({
         msg: "maximum players can be no more than 15",
+      });
+    }
+
+    if (parsedMaxPlayers < 1) {
+      return res.status(400).json({
+        msg: "minimum players must be at least 1",
+      });
+    }
+
+    if (parsedQuizDuration < 10 || parsedQuizDuration > 300) {
+      return res.status(400).json({
+        msg: "quiz duration must be between 10 and 300 seconds",
       });
     }
 
@@ -32,7 +46,8 @@ export const createRoom = async (req, res) => {
 
     const room = await Room.create({
       createdBy,
-      maxPlayers,
+      maxPlayers: parsedMaxPlayers,
+      quizDuration: parsedQuizDuration,
       quiz,
       roomCode,
     });

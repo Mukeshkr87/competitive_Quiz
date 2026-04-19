@@ -44,13 +44,15 @@ export default function Room() {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Rooms</h2>
-      <div className="flex mt-2 gap-4">
+    <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <h2 className="mb-4 text-2xl font-bold text-slate-900 dark:text-slate-100">
+        Rooms
+      </h2>
+      <div className="mt-2 flex gap-4">
         <Button
           onClick={addRoom}
           size="lg"
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-white transition hover:bg-indigo-700"
         >
           <Plus size={18} />
           Create Room
@@ -58,7 +60,7 @@ export default function Room() {
         <Button
           onClick={toggleDialog}
           size="lg"
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-white transition hover:bg-indigo-700"
         >
           Join Room
         </Button>
@@ -70,13 +72,16 @@ export default function Room() {
             className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 "
             key={room._id}
           >
-            <div className="bg-white shadow rounded-xl p-4 text-gray-800 flex items-center justify-between">
+            <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-4 text-slate-800 shadow-sm dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-100">
               <div>
                 <h3 className="font-semibold text-lg">
                   Room Code: {room.roomCode}
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Max Players Allowed: {room.maxPlayers}
+                </p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Quiz Time: {room.quizDuration || 30} seconds
                 </p>
               </div>
 
@@ -110,7 +115,7 @@ export default function Room() {
       {openDialog && <JoinRoomCard handleJoinRoom={handleJoinRoom} />}
 
       {!openDialog && rooms.length == 0 && (
-        <div className="text-muted-foreground mt-4">
+        <div className="mt-4 text-slate-600 dark:text-slate-400">
           No such rooms , create one
         </div>
       )}

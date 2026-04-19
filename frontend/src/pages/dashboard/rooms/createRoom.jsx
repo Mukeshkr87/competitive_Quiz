@@ -20,6 +20,7 @@ import { apiUrl } from "@/lib/api";
 export default function CreateRoom() {
   const [values, setValues] = useState(null);
   const [maxPlayers, setMaxPlayers] = useState("");
+  const [quizDuration, setQuizDuration] = useState("30");
 
   const { quizzes, setActiveTab, fetchRooms } = useDashboard();
 
@@ -30,10 +31,17 @@ export default function CreateRoom() {
 
   const handleCreateRoom = async () => {
     const token = Cookies.get("token");
+
+    if (!values?.length) {
+      toast.error("Please select a quiz");
+      return;
+    }
+
     try {
       const payload = {
         quiz: values[0].value,
         maxPlayers,
+        quizDuration,
       };
       console.log(payload);
 
@@ -48,6 +56,7 @@ export default function CreateRoom() {
       console.log(response.data, "response after creating room");
     } catch (error) {
       console.log(error, "error while creating room");
+      toast.error(error?.response?.data?.msg || "Unable to create room");
     }
   };
 
@@ -75,6 +84,22 @@ export default function CreateRoom() {
               placeholder="e.g. 5"
               value={maxPlayers}
               onChange={(e) => setMaxPlayers(e.target.value)}
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="quizDuration" className="text-gray-800">
+              Quiz Time (seconds)
+            </Label>
+            <Input
+              id="quizDuration"
+              type="number"
+              min="10"
+              max="300"
+              placeholder="e.g. 30"
+              value={quizDuration}
+              onChange={(e) => setQuizDuration(e.target.value)}
               className="bg-white border-gray-300 text-gray-800 placeholder-gray-400"
             />
           </div>

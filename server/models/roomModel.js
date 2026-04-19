@@ -32,6 +32,13 @@ const roomSchema = new mongoose.Schema(
       default: 10,
     },
 
+    quizDuration: {
+      type: Number,
+      default: 30,
+      min: 10,
+      max: 300,
+    },
+
     status: {
       type: String,
       enum: ["waiting", "in-progress", "ended"],

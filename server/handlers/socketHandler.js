@@ -57,6 +57,9 @@ export const handleSocket = (wss) => {
       socket.join(roomCode);
 
       socket.emit("role", isAdmin ? "admin" : "user");
+      socket.emit("roomConfig", {
+        quizDuration: Number(parsedRoomDetails.quizDuration) || 30,
+      });
 
       if (!isAdmin) {
         socket.to(roomCode).emit("newUserJoined", { userId, userName });
@@ -69,15 +72,20 @@ export const handleSocket = (wss) => {
           return;
         } else {
           // questions ek saath bhej do ...
-          const startTime = Date.now() + 2000;
+          const startDelay = 2000;
+          const durationInSeconds =
+            Number(parsedRoomDetails.quizDuration) || 30;
+          const durationInMs = durationInSeconds * 1000;
+          const startTime = Date.now() + startDelay;
           wss.to(roomCode).emit("startTime", { startTime });
 
           wss.to(roomCode).emit("status", {
             status: "in-progress",
             questions: questions,
+            quizDuration: durationInSeconds,
           });
 
-          const duration = 32300;
+          const duration = startDelay + durationInMs + 300;
           setTimeout(() => {
             wss.to(roomCode).emit("time-up");
             // user after recieving time-up , can see get their scores

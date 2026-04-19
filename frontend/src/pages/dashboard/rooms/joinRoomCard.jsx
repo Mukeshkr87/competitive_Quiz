@@ -29,7 +29,7 @@ export default function JoinRoomCard({ handleJoinRoom }) {
                 id="roomCode"
                 type="number"
                 placeholder="e.g. 987123"
-                className="rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+                className="rounded-lg border-gray-300 bg-white text-slate-900 placeholder:text-slate-500 focus:border-indigo-600 focus:ring-indigo-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-400"
                 onChange={(e) => setRoomCode(e.target.value)}
               />
             </div>

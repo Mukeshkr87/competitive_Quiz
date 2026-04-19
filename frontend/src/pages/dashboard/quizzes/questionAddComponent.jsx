@@ -9,8 +9,10 @@ const QuestionAddComponent = ({
   variant,
 }) => {
   return (
-    <div className="bg-white rounded-xl shadow p-4 space-y-4">
-      <h2 className="text-lg font-semibold">{heading}</h2>
+    <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        {heading}
+      </h2>
       <div
         className="max-h-[350px] md:max-h-[350px] overflow-y-auto space-y-3 
                             scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100"
@@ -18,9 +20,9 @@ const QuestionAddComponent = ({
         {[...list].map((q, i) => (
           <div
             key={q.id || q._id || `${q.title}-${i}`}
-            className="p-3 border rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"
+            className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 sm:flex-row sm:items-center sm:justify-between dark:border-slate-700 dark:bg-slate-950/60"
           >
-            <p className="text-sm md:text-base flex-1">
+            <p className="flex-1 text-sm text-slate-900 dark:text-slate-100 md:text-base">
               Question {i + 1}: {q.title}
             </p>
             <Button

@@ -68,9 +68,9 @@ export default function CreateQuiz() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-center">
+        <h1 className="text-center text-2xl font-bold text-slate-900 dark:text-slate-100 md:text-3xl">
           Create Quiz
         </h1>
 
@@ -80,7 +80,7 @@ export default function CreateQuiz() {
           id="title"
           type="text"
           placeholder="Enter quiz title..."
-          className="rounded-lg border-gray-300 focus:border-indigo-600 focus:ring-indigo-600"
+          className="rounded-lg border-gray-300 bg-white text-slate-900 placeholder:text-slate-500 focus:border-indigo-600 focus:ring-indigo-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder:text-slate-400"
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -97,7 +97,7 @@ export default function CreateQuiz() {
           {/* Selected Questions */}
 
           {questionList.length === 0 ? (
-            <div className="text-muted-foreground text-center">
+            <div className="text-center text-slate-600 dark:text-slate-400">
               No questions added
             </div>
           ) : (
@@ -119,7 +119,7 @@ export default function CreateQuiz() {
           <Button
             type="button"
             variant="outline"
-            className="rounded-lg border-gray-300 text-gray-700 hover:bg-gray-100"
+            className="rounded-lg border-slate-300 bg-white text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
             onClick={() => setActiveTab("quizzes")}
           >
             Cancel

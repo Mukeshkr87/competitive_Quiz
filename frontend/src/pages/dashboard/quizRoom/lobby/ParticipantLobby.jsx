@@ -1,4 +1,4 @@
-const ParticipantLobby = ({ roomCode }) => {
+const ParticipantLobby = ({ roomCode, quizDuration = 30 }) => {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-950 via-sky-950 to-cyan-900 text-white p-6">
       <div className="absolute top-10 text-center">
@@ -19,6 +19,9 @@ const ParticipantLobby = ({ roomCode }) => {
         </div>
         <p className="text-yellow-100 font-medium mb-4 text-lg">
           Waiting for host to start...
+        </p>
+        <p className="text-sm text-white/80">
+          Quiz time set to {quizDuration} seconds
         </p>
         <p className="text-xs text-white/60 mt-6">
           Get ready... the quiz will start soon!

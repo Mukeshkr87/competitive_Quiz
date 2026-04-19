@@ -9,7 +9,7 @@ const QuestionDisplay = ({ duration = 30, questions, socket, startTime }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const key = useRef(0);
   const questionCount = useRef(0);
-  const currTime = useRef(30);
+  const currTime = useRef(duration);
   const [currQuestion, setCurrQuestion] = useState(
     questions[questionCount.current]
   );
@@ -44,6 +44,10 @@ const QuestionDisplay = ({ duration = 30, questions, socket, startTime }) => {
       setStartTimer(true);
     }, delay);
   };
+
+  useEffect(() => {
+    currTime.current = duration;
+  }, [duration]);
 
   useEffect(() => {
     handleStartTime();

@@ -22,6 +22,7 @@ export default function QuizRoom() {
   const [timeUp, setTimeUp] = useState(false);
   const playerScore = useRef(null);
   const [leaderboard, setLeaderBoard] = useState([]);
+  const [quizDuration, setQuizDuration] = useState(30);
 
   const handleMsg = (msg) => {
     console.log(msg);
@@ -48,10 +49,15 @@ export default function QuizRoom() {
     setRole(msg);
   };
 
+  const handleRoomConfig = (data) => {
+    setQuizDuration(data.quizDuration || 30);
+  };
+
   const handleQuizStart = (msg) => {
     console.log(msg);
     setStatus(msg.status);
     questions.current = msg.questions;
+    setQuizDuration(msg.quizDuration || 30);
   };
 
   const handleUserJoin = (data) => {
@@ -92,6 +98,7 @@ export default function QuizRoom() {
 
     socket.on("message", handleMsg);
     socket.on("role", handleRole);
+    socket.on("roomConfig", handleRoomConfig);
     socket.on("status", handleQuizStart);
     socket.on("newUserJoined", handleUserJoin);
     socket.on("updateScore", handleScoreUpdate);
@@ -102,12 +109,13 @@ export default function QuizRoom() {
     return () => {
       socket.off("message", handleMsg);
       socket.off("role", handleRole);
+      socket.off("roomConfig", handleRoomConfig);
       socket.off("status", handleQuizStart);
       socket.off("newUserJoined", handleUserJoin);
       socket.off("updateScore", handleScoreUpdate);
       socket.off("startTime", handleStartTime);
       socket.off("time-up", handleTimeUp);
-      socket.on("leaderboard", handleScoresOfUsers);
+      socket.off("leaderboard", handleScoresOfUsers);
       socket.disconnect();
     };
   }, []);
@@ -123,13 +131,21 @@ export default function QuizRoom() {
   const renderContent = () => {
     if (role === "admin" && status === "waiting") {
       return (
-        <HostLobby startQuiz={startQuiz} players={users} roomCode={roomCode} />
+        <HostLobby
+          startQuiz={startQuiz}
+          players={users}
+          roomCode={roomCode}
+          quizDuration={quizDuration}
+        />
       );
     } else if (role === "user" && status === "waiting") {
-      return <ParticipantLobby roomCode={roomCode} />;
+      return (
+        <ParticipantLobby roomCode={roomCode} quizDuration={quizDuration} />
+      );
     } else if (status === "in-progress" && role === "user" && !timeUp) {
       return (
         <QuestionDisplay
+          duration={quizDuration}
           questions={questions.current}
           socket={socketRef.current}
           startTime={startTime.current}

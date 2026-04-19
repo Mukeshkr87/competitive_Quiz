@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 
-const HostLobby = ({ startQuiz, players, roomCode }) => {
+const HostLobby = ({ startQuiz, players, roomCode, quizDuration = 30 }) => {
   console.log(players, "players");
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-slate-950 via-sky-950 to-cyan-900 p-4">
@@ -12,6 +12,7 @@ const HostLobby = ({ startQuiz, players, roomCode }) => {
         <div className="text-4xl font-bold text-blue-600 tracking-widest mt-2 mb-4">
           {roomCode}
         </div>
+        <p className="text-sm text-gray-500">Quiz time: {quizDuration} seconds</p>
 
         <div className="border-t border-gray-200 pt-4">
           <h2 className="text-lg font-semibold text-gray-700 mb-3">
