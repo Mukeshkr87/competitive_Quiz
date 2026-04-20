@@ -3,6 +3,7 @@ import ParticipantLobby from "./lobby/ParticipantLobby";
 import HostLobby from "./lobby/HostLobby";
 import RoomLeaderboard from "./roomLeaderboard/RoomLeaderboard";
 import QuestionDisplay from "./questionDisplay/QuestionDisplay";
+import QuizResultView from "./QuizResultView";
 import { io } from "socket.io-client";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
@@ -20,9 +21,10 @@ export default function QuizRoom() {
   const [userScore, setUserScore] = useState([]);
   const startTime = useRef(0);
   const [timeUp, setTimeUp] = useState(false);
-  const playerScore = useRef(null);
   const [leaderboard, setLeaderBoard] = useState([]);
   const [quizDuration, setQuizDuration] = useState(30);
+  const [quizResult, setQuizResult] = useState(null);
+  const [resultLoading, setResultLoading] = useState(false);
 
   const handleMsg = (msg) => {
     console.log(msg);
@@ -34,9 +36,8 @@ export default function QuizRoom() {
   };
 
   const handleTimeUp = () => {
-    // playerScore.current = userScore;
     setTimeUp(true);
-    socketRef.current.emit("leaderboard", { score: playerScore.current });
+    setResultLoading(role === "user");
   };
 
   const handleStartTime = (data) => {
@@ -86,6 +87,13 @@ export default function QuizRoom() {
     });
   };
 
+  const handleQuizResult = (data) => {
+    setLeaderBoard(data.leaderboard || []);
+    setQuizResult(data);
+    setResultLoading(false);
+    setTimeUp(true);
+  };
+
   useEffect(() => {
     const socket = io(import.meta.env.VITE_WS_URL, {
       auth: {
@@ -105,6 +113,7 @@ export default function QuizRoom() {
     socket.on("startTime", handleStartTime);
     socket.on("time-up", handleTimeUp);
     socket.on("leaderboard", handleScoresOfUsers);
+    socket.on("quizResult", handleQuizResult);
 
     return () => {
       socket.off("message", handleMsg);
@@ -116,13 +125,10 @@ export default function QuizRoom() {
       socket.off("startTime", handleStartTime);
       socket.off("time-up", handleTimeUp);
       socket.off("leaderboard", handleScoresOfUsers);
+      socket.off("quizResult", handleQuizResult);
       socket.disconnect();
     };
   }, []);
-
-  useEffect(() => {
-    playerScore.current = userScore;
-  }, [userScore]);
 
   function startQuiz() {
     socketRef.current.emit("startQuiz");
@@ -154,6 +160,17 @@ export default function QuizRoom() {
     } else if (status === "in-progress" && role === "admin") {
       return <RoomLeaderboard players={userScore} />;
     } else if (timeUp) {
+      if (role === "user") {
+        return (
+          <QuizResultView
+            leaderboard={leaderboard}
+            loading={resultLoading}
+            recentScores={quizResult?.recentScores || []}
+            review={quizResult?.review || null}
+          />
+        );
+      }
+
       return <RoomLeaderboard players={leaderboard} />;
     }
   };

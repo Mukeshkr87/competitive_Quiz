@@ -13,12 +13,13 @@ export default function QuestionComp({
   selectedOption,
   enabled,
   handleSubmit,
+  timerKey,
 }) {
   return (
     <div>
       <div className="flex justify-center mb-6">
         <CountdownCircleTimer
-          key={0}
+          key={timerKey}
           isPlaying={true}
           duration={duration}
           colors={["#4f46e5", "#facc15", "#f97316", "#ef4444"]}

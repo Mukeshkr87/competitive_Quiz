@@ -1,13 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import { Button } from "@/components/ui/button";
 import QuestionComp from "./questionComp";
 
 const QuestionDisplay = ({ duration = 30, questions, socket, startTime }) => {
   const [selectedOption, setSelectedOption] = useState(null);
-  const key = useRef(0);
+  const [timerKey, setTimerKey] = useState(0);
   const questionCount = useRef(0);
   const currTime = useRef(duration);
   const [currQuestion, setCurrQuestion] = useState(
@@ -19,7 +17,13 @@ const QuestionDisplay = ({ duration = 30, questions, socket, startTime }) => {
   const currAnswer = useRef(null);
   const [enabled, setEnabled] = useState(true);
   const handleSubmit = () => {
-    setCurrQuestion(questions[++questionCount.current]);
+    const nextQuestion = questions[++questionCount.current];
+
+    setSelectedOption(null);
+    setEnabled(true);
+    currTime.current = duration;
+    setTimerKey((previous) => previous + 1);
+    setCurrQuestion(nextQuestion);
   };
 
   const handleClickSubmitButton = (opt) => {
@@ -57,7 +61,7 @@ const QuestionDisplay = ({ duration = 30, questions, socket, startTime }) => {
     if (startTimer && currQuestion) {
       return (
         <QuestionComp
-          key={key}
+          key={currQuestion.id}
           currQuestion={currQuestion}
           currTime={currTime}
           duration={duration}
@@ -67,6 +71,7 @@ const QuestionDisplay = ({ duration = 30, questions, socket, startTime }) => {
           selectedOption={selectedOption}
           setEnabled={setEnabled}
           setSelectedOption={setSelectedOption}
+          timerKey={timerKey}
         />
       );
     } else if (!startTimer) {
